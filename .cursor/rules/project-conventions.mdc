@@ -1,0 +1,41 @@
+---
+description: General project rules and conventions
+alwaysApply: true
+---
+
+# Project Conventions
+
+## Documentation and structure
+
+- **Markdown files**: Put all `.md` files under `docs/` (e.g. `docs/schema.md`, `docs/architecture.md`). Do not add `.md` in the project root or elsewhere unless requested.
+- **Monorepo layout**: **`frontend/`** — Next.js app (`frontend/src/`); **`backend/`** — FastAPI + SQLite; **`docs/`** — documentation at repo root.
+- **Paths**: In the Next.js app, use the `@/` alias for imports (e.g. `@/lib/...`, `@/components/...`, `@/features/...`, `@/hooks/...`).
+- **UI folders**: **`frontend/src/components/`** holds only **app-wide, reusable** UI (forms, modals shell, buttons, layout primitives). Feature-specific UI lives under **`frontend/src/features/<feature>/`** (e.g. `employees`, `projects`, `layout` for sidebar/shell). Shared SVG icons used by multiple features stay in **`frontend/src/components/icons/`**; icons tied to one feature live next to that feature (e.g. `features/employees/icons/`).
+
+## Backend architecture
+
+- **Three layers only**: Route → Service → Repository → Database.
+  - **Routes** (`frontend/src/app/api/**/route.ts`): Parse request (params, body), call **service**, return response. No business logic, no DB, no validation.
+  - **Services** (`frontend/src/lib/*.service.ts`): All business logic. Call validators and repositories only. Return structured results (e.g. `{ success, employee }` or `{ success: false, error, details }`). Do not touch the database directly.
+  - **Repositories** (`frontend/src/lib/*.repository.ts`): HTTP clients to the **Python backend** (`backend/`). CRUD and queries only; no business rules.
+- **API error shape**: Use the same JSON body for errors: `{ error: string, details: string[] }`. In routes, use helpers from `@/lib/api-response.ts`: `parseId`, `parseJsonBody`, `badRequest`, `notFound`.
+- **Validation**: Validation lives in the **service** (or validators called by the service). Routes must not validate; they only call the service and map results to HTTP.
+
+## Data layer
+
+- **Database**: Lives in **`backend/`** (SQLite on disk, FastAPI). Schema and seeding: `backend/app/database.py`, `backend/app/seed_data.py`; queries: `backend/app/repositories/`.
+- **Frontend repositories** call the backend over HTTP (`BACKEND_URL`, default `http://127.0.0.1:8000`). No Drizzle or direct DB access in the Next.js app.
+- **Bulk seed (dev only):** Optional **`SEED_BULK_COUNT`** on the **Python backend** process; see `docs/session3-bulk-seed.md`.
+
+## Frontend
+
+- **Data and requests**: No `fetch` or data-loading `useEffect` inside components. Put all API calls and loading state in **custom hooks** (e.g. `useEmployees`, `useCreateEmployee`). Components only use hook return values and callbacks.
+- **One file per component**: One component per file. Extract modals, icons, and small UI pieces into their own files under the right feature or `components/` (e.g. `features/employees/DeleteConfirmModal.tsx`, `components/icons/PencilIcon.tsx`). Pages/layouts only import and compose.
+- **Forms**: For required fields, use `FormField` with `required` and set `aria-required="true"` on the input/select so required fields are clearly marked and accessible.
+- **Errors**: Show API validation errors in the UI (e.g. list under the form with `role="alert"`). Use the `details` array from the API error body when present.
+
+## Testing
+
+- **Runner**: Jest in **`frontend/`**; component tests use `@testing-library/react` and `@testing-library/jest-dom`.
+- **Next.js in tests**: `next/link` and `next/navigation` are mocked via `frontend/jest.config.js` `moduleNameMapper` (see `frontend/src/__mocks__/next-link.tsx`, `frontend/src/__mocks__/next-navigation.ts`). Do not add inline `jest.mock("next/...")` unless needed for a single test.
+- **Component tests**: Prefer `screen.getByRole`, `getByLabelText`, `getByText`; fire events with `fireEvent`. Keep tests focused on behavior, not implementation.

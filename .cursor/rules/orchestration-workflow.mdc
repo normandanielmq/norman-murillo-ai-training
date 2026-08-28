@@ -1,0 +1,24 @@
+---
+description: Multi-phase workflow (plan → implement → UI); emulates orchestrator pacing in one session
+alwaysApply: true
+---
+
+# Orchestration workflow
+
+Use a **phased** flow in a single Cursor session—there are no separate Copilot subagents. **Project Conventions** and **Naming and patterns** always apply.
+
+## When to use phases
+
+- **Non-trivial work** (new features, multi-file changes, refactors, ambiguous requirements): produce a **short plan first** (steps, files, edge cases), then implement—unless the user explicitly says to implement immediately or the change is trivial (e.g. one obvious fix).
+- **Plan-only requests** (“plan”, “approach”, “no code yet”): follow **planning-phase** only; do not edit files unless asked.
+
+## Phases (conceptual)
+
+1. **Planner** — Research the repo; ordered steps; files touched; edge cases and error states; open questions if blocked. Use the **planning-phase** rule for depth.
+2. **Coder** — Implement using this repo’s layers and patterns. Use **implementation-phase** when writing or refactoring substantial `frontend/src/**` or `backend/**` code.
+3. **Designer** — For UI changes: usability, accessibility, visual alignment with existing components. Use **design-phase** when editing user-facing `*.tsx`.
+
+## How to delegate (prompting style)
+
+- State **what** to achieve and **where** (files/areas), not step-by-step micro-instructions unless the user wants that.
+- Avoid conflicting edits: finish one coherent phase before rewriting the same areas for a different concern unless combining is clearly safe.

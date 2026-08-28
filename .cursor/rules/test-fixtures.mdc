@@ -1,0 +1,25 @@
+---
+description: Shared test data and factories; reuse across Jest tests
+globs: "**/*.test.ts,**/*.test.tsx"
+alwaysApply: false
+---
+
+# Test fixtures
+
+## Location
+
+- Put **reusable sample entities and props** in `frontend/src/test/fixtures/` (one file per domain is fine: `employee.ts`, `project.ts`, etc.).
+- Re-export from `frontend/src/test/fixtures/index.ts` when multiple exports are useful.
+- Import in tests with the `@/` alias, e.g. `import { employeeJaneDoe } from "@/test/fixtures"`.
+
+## Rules
+
+- **Prefer named exports** of stable objects (`employeeJaneDoe`, `createEmployeeDtoTestUser`) over copy-pasting literals across `*.test.ts` / `*.test.tsx`.
+- **Factories** (`deleteConfirmModalDefaultProps()`, `listEmployeesResultOneJane()`) are for fresh `jest.fn()` instances or small variations—use when tests must not share mutable mock state.
+- **Keep repository integration DTOs** distinct from UI fixtures when they must avoid collisions with **seed data** (e.g. unique national IDs in `employee.repository.test.ts`).
+- **Do not** import fixtures from production `frontend/src/app` or `frontend/src/lib` runtime code—fixtures are **test-only**.
+- When changing a fixture, run **`npm test`** and fix any tests that depended on the old literal.
+
+## Relationship to other rules
+
+- Repository tests still use `createFreshTestDb()` / `setTestDb()` per **Project Conventions**; fixtures supply **values**, not DB setup.

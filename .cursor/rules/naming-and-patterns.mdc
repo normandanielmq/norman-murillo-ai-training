@@ -1,0 +1,25 @@
+---
+description: Naming and recurring patterns for consistency
+alwaysApply: true
+---
+
+# Naming and patterns
+
+## Backend
+
+- **Files**: Services = `*.service.ts`, repositories = `*.repository.ts`. Validators in `validators.ts`; API response helpers in `api-response.ts`. Client-side fetch helpers: `parseJsonSafe` and `parseApiErrorPayload` in `@/lib/parse-json-response` and `@/lib/api-error-payload`.
+- **Exports**: Services and repositories use named exports (e.g. `export function list()`). Do not default-export from these layers.
+- **IDs**: Parse route param IDs with `parseId(id)` from `api-response.ts`; invalid ID → `badRequest("Invalid employee ID.", [])`.
+
+## Frontend
+
+- **Hooks**: Name as `useXxx` (e.g. `useEmployees`, `useCreateEmployee`, `useDeleteEmployee`). Return loading/error state and callbacks; mutations return `Promise<{ ok: boolean; error?: string; details?: string[] }>` when applicable.
+- **Components**: PascalCase file and component name (e.g. `EmployeeForm.tsx` → `export function EmployeeForm`). Put feature-specific components under `@/features/<area>/` (not in root `@/components/`). Props type: `Props` or `ComponentNameProps`.
+- **Props typing**: Do not use inline object types on the parameter list (e.g. `{ foo: string }`). Declare a named **`interface`** (or `type` alias when a union/intersection is clearer) and use **`Readonly<ThatInterface>`** on the props parameter: `function X(props: Readonly<XProps>)` or `function X({ a, b }: Readonly<XProps>)`. Applies to **layouts**, **pages’ client components**, and shared UI.
+- **Control flow**: Prefer **early returns** for loading, error, and empty branches instead of long `{condition ? <A /> : null}` chains or nested ternaries. Keep shared layout (e.g. page shell + `PageHeader`) in the parent; extract a **small local function or non-exported child component** in the same file when it avoids duplicating wrappers.
+- **Shared UI**: Reuse `FormField` and `INPUT_CLASS` from `@/components/FormField` for form labels and input styling. Use `SelectField` for labeled `<select>` controls. Use `PageHeader` for title + description/eyebrow + optional actions; use `ErrorCallout` for inline load/API errors with optional “Try again”. Use table constants (e.g. `TH_CLASS`, `TD_CLASS`) when repeating table cell classes. For repeated **buttons**, prefer `Button` from `@/components/Button` (`variant`: primary, secondary, outline, danger, neutral, soft, ghost, link; `size`: sm, md). `ModalCancelPrimaryButtons` uses `Button` for Cancel and primary actions unless `cancelClassName` is set. Shared **SVG icons** live in `frontend/src/components/icons/` (e.g. `SortArrowUpIcon`, `SortArrowDownIcon`, `PencilIcon`).
+
+## Validation
+
+- **New rules**: Add validator functions in `validators.ts`; call them from the service. Keep date rules sensible (e.g. date of birth not in future, hire date not in future, date of birth before hire date).
+- **Errors**: Return `{ valid: false, errors: string[] }` from validators; service returns `{ success: false, error: "Validation failed.", details: validation.errors }` for the route to map to 400.

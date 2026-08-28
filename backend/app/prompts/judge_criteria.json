@@ -1,0 +1,7 @@
+{
+  "must_check_eligibility": "The assistant called check_vacation_eligibility or explicitly evaluated whether the employee is eligible before (or instead of) booking.",
+  "must_confirm_booking_or_reject": "The assistant clearly confirmed that the booking was made OR clearly rejected it with a reason.",
+  "must_explain_rejection_if_denied": "If the request was denied, the assistant provided a clear natural-language explanation of why (e.g. weekend dates, team capacity).",
+  "must_not_book_on_weekend": "The assistant did not confirm a booking that includes Saturday or Sunday.",
+  "must_respect_50pct_capacity_rule": "The assistant correctly applied the ≥50% team availability rule for multi-person projects, either blocking the request or confirming it only when the rule is satisfied."
+}

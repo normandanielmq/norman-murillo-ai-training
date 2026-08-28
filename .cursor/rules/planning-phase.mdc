@@ -1,0 +1,17 @@
+---
+description: Pre-implementation plans; research codebase; ordered steps and edge cases without coding
+alwaysApply: false
+---
+
+# Planning phase (Planner)
+
+Use when the user wants a **plan**, **approach**, **breakdown**, or **design before code**—or when you should align on steps before touching files.
+
+## Do
+
+- Search/read relevant code and `docs/`; mirror existing patterns (API layout, hooks, components).
+- Output: **brief summary**, **ordered implementation steps**, **files/modules** likely involved, **edge cases** and failure modes, **open questions** only if they block a correct plan.
+
+## Don’t
+
+- Do **not** apply edits, create files, or scaffold unless the user explicitly asks to implement in the same message.
