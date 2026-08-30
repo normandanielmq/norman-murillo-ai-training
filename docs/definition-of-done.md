@@ -1,6 +1,6 @@
 # Definition of done — Session 1
 
-Phase 7 checklist from the implementation plan. All items verified.
+Phase 7 checklist from [the implementation plan](./IMPLEMENTATION_PLAN.md). All items verified.
 
 ---
 
