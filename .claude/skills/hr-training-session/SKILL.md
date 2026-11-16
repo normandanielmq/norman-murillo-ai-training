@@ -9,7 +9,7 @@ description: >-
 
 # HR training session — repo playbook
 
-Use this skill together with `.cursor/rules/project-conventions.mdc`, `naming-and-patterns.mdc`, and `orchestration-workflow.mdc`. Prefer **short plan → implement** for non-trivial work.
+Use this skill together with the repo conventions in `CLAUDE.md` (root) and `frontend/CLAUDE.md`. Prefer **short plan → implement** for non-trivial work.
 
 ## Backend layers (Next.js API + Python DB)
 
